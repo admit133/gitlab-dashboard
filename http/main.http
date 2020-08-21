@@ -1,0 +1,66 @@
+# click-storage - 15
+# creative - 38
+# api - 29
+# go-api - 28
+# geoip - 27
+# click-storage - 15
+GET http://{{host}}/metrics
+Accept: application/json
+
+
+### Test Error
+GET http://{{host}}/error
+Accept: application/json
+
+
+### Get All environments
+GET http://{{host}}/environments
+Accept: application/json
+
+### Get project branches
+GET http://{{host}}/environments/zyablik/projects/28/repository/branches
+Accept: application/json
+
+### Get All Jobs
+GET http://{{host}}/jobs
+Accept: application/json
+
+### Config
+GET http://{{host}}/config
+Accept: application/json
+
+### Deployments
+GET http://{{host}}/environments/zyablik/projects/28/deployments
+Accept: application/json
+
+### Jobs
+GET http://{{host}}/environments/zyablik/projects/27/jobs
+Accept: application/json
+
+### Run a job
+POST http://{{host}}/environments/zyablik/projects/28/jobs
+Content-Type: application/json
+
+{
+  "ref": "sa-9324-new-model-property",
+  "sha": "7c7f2888fc7f0bed2e93c8c36af39755833a3ab3"
+}
+
+### Run jobs by branch prefix
+POST http://{{host}}/environments/redfox/jobs
+Content-Type: application/json
+
+{
+  "query": "master"
+}
+
+### Run a job
+POST http://{{host}}/environments/zyablik/projects/28/jobs
+Content-Type: application/json
+
+{
+  "ref": "master",
+  "sha": "ac36f3ce148103423d7af775b50ebc11ac2989cb"
+}
+
+###

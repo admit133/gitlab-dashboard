@@ -1,0 +1,14 @@
+{
+  "cats": [
+    {"id":  1, "name": "Tom", "avatar": "https://cataas.com/cat"},
+    {"id":  2, "name": "Sylvester", "avatar":  "https://cataas.com/cat"},
+    {"id":  3, "name": "Max", "avatar":  "https://cataas.com/cat"},
+    {"id":  4, "name": "Smokey", "avatar":  "https://cataas.com/cat"},
+    {"id":  5, "name": "Sam", "avatar":  "https://cataas.com/cat"},
+    {"id":  6, "name": "Kitty", "avatar":  "https://cataas.com/cat"},
+    {"id":  7, "name": "Sassy", "avatar":  "https://cataas.com/cat"},
+    {"id":  8, "name": "Shadow", "avatar":  "https://cataas.com/cat"},
+    {"id":  9, "name": "Simba", "avatar":  "https://cataas.com/cat"},
+    {"id":  10, "name": "Patch", "avatar":  "https://cataas.com/cat"}
+  ]
+}

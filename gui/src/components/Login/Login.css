@@ -1,0 +1,59 @@
+.login-page {
+    position: relative;
+    background: rgb(27,0,0);
+    background: linear-gradient(90deg, rgba(27,0,0,1) 0%, rgba(41,0,0,1) 25%, rgba(56,0,0,1) 75%, rgba(27,0,0,1) 100%);
+}
+
+.login-page__mid {
+    position: absolute;
+    width: 100%;
+    height: 100vh;
+    /*background: rgba(168, 91, 0, 0.29);*/
+}
+
+.login-page__logo {
+    background-position: center center;
+    box-sizing: border-box;
+    height: 230px;
+    width: 250px;
+    background-image: url('./assets/auth-logo.png');
+    background-size: cover;
+    margin-right: 100px;
+    position: relative;
+}
+
+.login-page__logo:after {
+    position: absolute;
+    content: '';
+    display: block;
+    height: calc(100% + 20px);
+    right: -30px;
+    top: -10px;
+    width: 5px;
+    background-color: #af0000;
+}
+
+.login-page__content {
+    padding-right: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.ant-btn-dangerous.ant-btn-primary {
+    background-color: #7e1618;
+    border-color: #7e1618;
+}
+
+.login-page__logo:after {
+    background-color: #7e1618;
+}
+
+.ant-btn-dangerous.ant-btn-primary:hover{
+    background-color: #3e0d0f;
+    border-color: #3e0d0f;
+}
+
+.anticon-gitlab {
+    font-size: 20px;
+}

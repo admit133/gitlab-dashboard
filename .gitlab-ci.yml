@@ -1,0 +1,12 @@
+include:
+  - template: Auto-DevOps.gitlab-ci.yml
+
+variables:
+  TEST_DISABLED: "true"
+  CODE_QUALITY_DISABLED: "true"
+  POSTGRES_ENABLED: "false"
+  STAGING_ENABLED: "true"
+
+build:
+  interruptible: true
+

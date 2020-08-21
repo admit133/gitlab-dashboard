@@ -1,0 +1,9 @@
+.env-page__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.env-page__deploy-all {
+    display: flex;
+}

@@ -1,0 +1,26 @@
+.not-found {
+    padding-top: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.not-found p {
+    text-transform: uppercase;
+    color: black;
+    font-size: 26px;
+}
+
+.meme {
+    width: 600px;
+    height: 314px;
+    background-image: url('./mem.jpg');
+    background-size: cover;
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.not-found p.code {
+    font-size: 50px;
+}
