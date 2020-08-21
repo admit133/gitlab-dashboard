@@ -361,7 +361,6 @@ func (c *Service) findJobForGivenCriteria(projectId int, environment string, ref
 			Scope: []wrappedGitLab.BuildStateValue{
 				wrappedGitLab.Manual,
 				wrappedGitLab.Success,
-				wrappedGitLab.Created,
 				wrappedGitLab.Failed,
 			},
 		})
