@@ -9,6 +9,7 @@ import (
 	"github.com/fr05t1k/gitlab-environment-dashboard/server/pkg/utils"
 	log "github.com/sirupsen/logrus"
 	wrappedGitLab "github.com/xanzy/go-gitlab"
+	"sort"
 	"sync"
 	"time"
 )
@@ -24,6 +25,10 @@ type Service struct {
 	git             *wrappedGitLab.Client
 	environments    map[string]*Environment
 	environmentsMtx sync.RWMutex
+
+	// branches by project ID
+	branches    map[int][]*wrappedGitLab.Branch
+	branchesMtx sync.RWMutex
 
 	// We store jobs which was run from the dashboard
 	jobs                  map[string]map[int]*wrappedGitLab.Job
@@ -85,13 +90,72 @@ type ProjectUser struct {
 	AvatarURL string `json:"avatarURL"`
 }
 
-// GetBranches return 100 first branches for given projectID
+// Sorting branches by committed_date desc
+type ByCommitDateDesc []*wrappedGitLab.Branch
+
+func (s ByCommitDateDesc) Len() int {
+	return len(s)
+}
+
+func (s ByCommitDateDesc) Less(i, j int) bool {
+	return s[i].Commit.CommittedDate.After(*s[j].Commit.CommittedDate)
+}
+
+func (s ByCommitDateDesc) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+
+// GetBranches returns all branches for given projectID
 func (c *Service) GetBranches(projectID int) ([]*wrappedGitLab.Branch, error) {
-	branches, _, err := c.git.Branches.ListBranches(projectID,
-		&wrappedGitLab.ListBranchesOptions{
-			ListOptions: wrappedGitLab.ListOptions{PerPage: 100},
-		})
-	return branches, err
+	var branches []*wrappedGitLab.Branch
+
+	c.branchesMtx.RLock()
+	c.branchesMtx.RUnlock()
+
+	if val, ok := c.branches[projectID]; ok {
+		branches = val
+	}
+
+	return branches, nil
+}
+
+func (c *Service) UpdateBranches(projectIDs []int) error {
+	branchesByProjectID := make(map[int][]*wrappedGitLab.Branch, len(projectIDs))
+	for _, projectID := range projectIDs {
+		var branches []*wrappedGitLab.Branch
+		page := 1
+		for {
+			remoteBranches, resp, err := c.git.Branches.ListBranches(
+				projectID,
+				&wrappedGitLab.ListBranchesOptions{
+					ListOptions: wrappedGitLab.ListOptions{PerPage: 100, Page: page},
+				},
+			)
+
+			if err != nil {
+				log.Println("Error when getting branches list, ", err)
+				break
+			}
+
+			for _, branch := range remoteBranches {
+				branches = append(branches, branch)
+			}
+
+			if page >= resp.TotalPages {
+				break
+			}
+
+			page++
+		}
+		sort.Sort(ByCommitDateDesc(branches))
+		branchesByProjectID[projectID] = branches
+	}
+
+	c.branchesMtx.Lock()
+	c.branches = branchesByProjectID
+	c.branchesMtx.Unlock()
+
+	return nil
 }
 
 const (
@@ -298,12 +362,12 @@ func (c *Service) GetEnvironments() []*Environment {
 	return environments
 }
 
-func (s *Service) GetJobs() map[string]map[int]*wrappedGitLab.Job {
+func (c *Service) GetJobs() map[string]map[int]*wrappedGitLab.Job {
 	jobs := map[string]map[int]*wrappedGitLab.Job{}
-	s.jobsMtx.RLock()
-	defer s.jobsMtx.RUnlock()
+	c.jobsMtx.RLock()
+	defer c.jobsMtx.RUnlock()
 
-	for env, project := range s.jobs {
+	for env, project := range c.jobs {
 		for projectId, job := range project {
 			if _, ok := jobs[env]; !ok {
 				jobs[env] = map[int]*wrappedGitLab.Job{}
@@ -361,6 +425,7 @@ func (c *Service) findJobForGivenCriteria(projectId int, environment string, ref
 			Scope: []wrappedGitLab.BuildStateValue{
 				wrappedGitLab.Manual,
 				wrappedGitLab.Success,
+				wrappedGitLab.Created,
 				wrappedGitLab.Failed,
 			},
 		})
@@ -426,6 +491,8 @@ func NewClient(gitLabToken, gitLabBaseURL string, protectedEnvironments []string
 		git:                     git,
 		environments:            map[string]*Environment{},
 		environmentsMtx:         sync.RWMutex{},
+		branches:                map[int][]*wrappedGitLab.Branch{},
+		branchesMtx:             sync.RWMutex{},
 		jobs:                    map[string]map[int]*wrappedGitLab.Job{},
 		jobsMtx:                 sync.RWMutex{},
 		protectedEnvironments:   protectedEnvironments,

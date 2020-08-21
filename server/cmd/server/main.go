@@ -33,8 +33,11 @@ func main() {
 	)
 
 	scheduleUpdateEnvironments(gitLabService, cfg.UpdateDuration, cfg.GitLabProjectIDs)
+	scheduleUpdateBranches(gitLabService, cfg.UpdateDuration, cfg.GitLabProjectIDs)
 	err = gitLabService.UpdateEnvironments(cfg.GitLabProjectIDs)
 	catchFatalError(err, "cannot update environments: %v", err)
+	err = gitLabService.UpdateBranches(cfg.GitLabProjectIDs)
+	catchFatalError(err, "cannot update branches: %v", err)
 
 	r := mux.NewRouter()
 
@@ -202,10 +205,28 @@ func scheduleUpdateEnvironments(service *gitlab.Service, duration time.Duration,
 	log.Infof("environments will be updated every: %v\n", duration)
 	go func() {
 		for {
-			log.Info("update has been started")
+			log.Info("environments update has been started")
 			start := time.Now()
 			err := service.UpdateEnvironments(projectIDs)
-			status := "update has been completed."
+			status := "environments update has been completed."
+			if err != nil {
+				status = "error occurred"
+				log.Error(err)
+			}
+			log.Infof("%s. elapsed: %v\n", status, time.Since(start))
+			<-time.After(duration)
+		}
+	}()
+}
+
+func scheduleUpdateBranches(service *gitlab.Service, duration time.Duration, projectIDs []int) {
+	log.Infof("branches will be updated every: %v\n", duration)
+	go func() {
+		for {
+			log.Info("branches update has been started")
+			start := time.Now()
+			err := service.UpdateBranches(projectIDs)
+			status := "branches update has been completed."
 			if err != nil {
 				status = "error occurred"
 				log.Error(err)
