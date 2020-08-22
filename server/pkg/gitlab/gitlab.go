@@ -110,7 +110,7 @@ func (c *Service) GetBranches(projectID int) ([]*wrappedGitLab.Branch, error) {
 	var branches []*wrappedGitLab.Branch
 
 	c.branchesMtx.RLock()
-	c.branchesMtx.RUnlock()
+	defer c.branchesMtx.RUnlock()
 
 	if val, ok := c.branches[projectID]; ok {
 		branches = val
