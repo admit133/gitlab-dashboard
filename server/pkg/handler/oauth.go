@@ -61,7 +61,7 @@ func CreateOauthHandler(gitLabBaseUrl string, gitLabAppID string, gitLabSecret s
 		if resp.StatusCode != http.StatusOK {
 			body, err := ioutil.ReadAll(resp.Body)
 			log.Printf("%v,%v", string(body), err)
-			badRequest(writer, "authorization failed: "+requestUrl)
+			badRequest(writer, "authorization failed, url: "+requestUrl+",code: "+string(resp.StatusCode)+",body: "+string(body))
 			return
 		}
 
