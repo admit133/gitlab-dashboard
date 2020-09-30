@@ -52,7 +52,7 @@ func CreateOauthHandler(gitLabBaseUrl string, gitLabAppID string, gitLabSecret s
 			code,
 			redirectUrl,
 		)
-		resp, err := http.Post(requestUrl, "", strings.NewReader(""))
+		resp, err := http.Post(requestUrl, "application/json", strings.NewReader(""))
 		if err != nil {
 			log.Error(err)
 			badRequest(writer, "cannot get token")
