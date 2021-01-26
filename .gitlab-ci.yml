@@ -1,6 +1,10 @@
 include:
   - template: Auto-DevOps.gitlab-ci.yml
 
+.auto-deploy:
+  image: "registry.gitlab.com/gitlab-org/cluster-integration/auto-deploy-image:v2.4.0"
+  dependencies: []
+
 variables:
   TEST_DISABLED: "true"
   CODE_QUALITY_DISABLED: "true"
