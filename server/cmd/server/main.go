@@ -34,10 +34,11 @@ func main() {
 
 	scheduleUpdateEnvironments(gitLabService, cfg.UpdateDuration, cfg.GitLabProjectIDs)
 	scheduleUpdateBranches(gitLabService, cfg.UpdateDuration, cfg.GitLabProjectIDs)
-	err = gitLabService.UpdateEnvironments(cfg.GitLabProjectIDs)
-	catchFatalError(err, "cannot update environments: %v", err)
-	err = gitLabService.UpdateBranches(cfg.GitLabProjectIDs)
-	catchFatalError(err, "cannot update branches: %v", err)
+
+	//err = gitLabService.UpdateEnvironments(cfg.GitLabProjectIDs)
+	//catchFatalError(err, "cannot update environments: %v", err)
+	//err = gitLabService.UpdateBranches(cfg.GitLabProjectIDs)
+	//catchFatalError(err, "cannot update branches: %v", err)
 
 	r := mux.NewRouter()
 
