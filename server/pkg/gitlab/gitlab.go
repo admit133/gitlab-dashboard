@@ -497,6 +497,6 @@ func NewClient(gitLabToken, gitLabBaseURL string, protectedEnvironments []string
 		jobsMtx:                 sync.RWMutex{},
 		protectedEnvironments:   protectedEnvironments,
 		projectIDs:              projectIDs,
-		jobRecursiveSearchLimit: 3,
+		jobRecursiveSearchLimit: 10,
 	}, nil
 }
