@@ -10,6 +10,8 @@ variables:
   CODE_QUALITY_DISABLED: "true"
   POSTGRES_ENABLED: "false"
   STAGING_ENABLED: "true"
+  SAST_DISABLED: "true"
+  CODE_INTELLIGENCE_DISABLED: "true"
 
 build:
   interruptible: true
