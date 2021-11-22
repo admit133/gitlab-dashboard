@@ -6,7 +6,7 @@ package gitlab
 import (
 	"errors"
 	"fmt"
-	"github.com/fr05t1k/gitlab-environment-dashboard/server/pkg/utils"
+	"gitlab-environment-dashboard/server/pkg/utils"
 	log "github.com/sirupsen/logrus"
 	wrappedGitLab "github.com/xanzy/go-gitlab"
 	"sort"

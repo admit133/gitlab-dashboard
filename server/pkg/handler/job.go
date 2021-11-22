@@ -3,9 +3,9 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/fr05t1k/gitlab-environment-dashboard/server/pkg/gitlab"
 	"github.com/gorilla/mux"
 	gitlab2 "github.com/xanzy/go-gitlab"
+	"gitlab-environment-dashboard/server/pkg/gitlab"
 	"net/http"
 )
 

@@ -2,8 +2,8 @@ package handler
 
 import (
 	"fmt"
-	"github.com/fr05t1k/gitlab-environment-dashboard/server/pkg/gitlab"
 	"github.com/gorilla/mux"
+	"gitlab-environment-dashboard/server/pkg/gitlab"
 	"net/http"
 )
 

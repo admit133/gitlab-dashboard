@@ -5,7 +5,7 @@ ADD gui /var/lib/gui
 RUN yarn
 RUN yarn build
 
-FROM golang:1.14 AS server
+FROM golang:1.17 AS server
 
 ADD server /go/src/server
 WORKDIR /go/src/server/cmd/server
