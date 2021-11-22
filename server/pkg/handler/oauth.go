@@ -3,7 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/fr05t1k/gitlab-environment-dashboard/server/pkg/gitlab"
+	"gitlab-environment-dashboard/server/pkg/gitlab"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"

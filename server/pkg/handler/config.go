@@ -2,8 +2,8 @@ package handler
 
 import (
 	"fmt"
-	"github.com/fr05t1k/gitlab-environment-dashboard/server/pkg/config"
-	"github.com/fr05t1k/gitlab-environment-dashboard/server/pkg/gitlab"
+	"gitlab-environment-dashboard/server/pkg/config"
+	"gitlab-environment-dashboard/server/pkg/gitlab"
 	"net/http"
 )
 

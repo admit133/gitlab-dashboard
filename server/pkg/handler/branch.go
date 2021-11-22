@@ -2,7 +2,7 @@ package handler
 
 import (
 	"fmt"
-	"github.com/fr05t1k/gitlab-environment-dashboard/server/pkg/gitlab"
+	"gitlab-environment-dashboard/server/pkg/gitlab"
 	"github.com/gorilla/mux"
 	wrappedGitlab "github.com/xanzy/go-gitlab"
 	"net/http"

@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/fr05t1k/gitlab-environment-dashboard/server/pkg/config"
-	"github.com/fr05t1k/gitlab-environment-dashboard/server/pkg/gitlab"
-	"github.com/fr05t1k/gitlab-environment-dashboard/server/pkg/handler"
+	"gitlab-environment-dashboard/server/pkg/config"
+	"gitlab-environment-dashboard/server/pkg/gitlab"
+	"gitlab-environment-dashboard/server/pkg/handler"
 	"github.com/gorilla/handlers"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
