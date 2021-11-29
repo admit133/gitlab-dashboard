@@ -327,6 +327,7 @@ func (c *Service) UpdateEnvironments(projectIds []int) error {
 			// because ListEnvironments doesn't return it
 			remoteEnvironment, _, err = c.git.Environments.GetEnvironment(projectId, remoteEnvironment.ID)
 			fmt.Println(remoteEnvironment.Name)
+			fmt.Println(projectId)
 			if err != nil {
 				return err
 			}
