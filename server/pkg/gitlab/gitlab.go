@@ -6,9 +6,9 @@ package gitlab
 import (
 	"errors"
 	"fmt"
-	"gitlab-environment-dashboard/server/pkg/utils"
 	log "github.com/sirupsen/logrus"
 	wrappedGitLab "github.com/xanzy/go-gitlab"
+	"gitlab-environment-dashboard/server/pkg/utils"
 	"sort"
 	"sync"
 	"time"
@@ -326,6 +326,8 @@ func (c *Service) UpdateEnvironments(projectIds []int) error {
 			// We need to fetch env by ID to get last deployment
 			// because ListEnvironments doesn't return it
 			remoteEnvironment, _, err = c.git.Environments.GetEnvironment(projectId, remoteEnvironment.ID)
+			fmt.Println(remoteEnvironment.Name)
+			fmt.Println(projectId)
 			if err != nil {
 				return err
 			}

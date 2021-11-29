@@ -49,11 +49,15 @@ func convertWrappedDeployable(deployment *wrappedGitlab.Deployment) *Deployable 
 }
 
 func convertWrappedUser(user *wrappedGitlab.User) *User {
-	return &User{
-		Name:      user.Name,
-		Username:  user.Username,
-		AvatarURL: user.AvatarURL,
+	if user != nil {
+		return &User{
+			Name:      user.Name,
+			Username:  user.Username,
+			AvatarURL: user.AvatarURL,
+		}
 	}
+
+	return &User{}
 }
 
 func convertWrappedProjectUser(user *wrappedGitlab.ProjectUser) *ProjectUser {
