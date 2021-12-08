@@ -1,18 +1,71 @@
-include:
-  - template: Auto-DevOps.gitlab-ci.yml
-
-.auto-deploy:
-  image: "registry.gitlab.com/gitlab-org/cluster-integration/auto-deploy-image:v2.4.0"
-  dependencies: []
-
 variables:
-  TEST_DISABLED: "true"
-  CODE_QUALITY_DISABLED: "true"
-  POSTGRES_ENABLED: "false"
-  STAGING_ENABLED: "true"
-  SAST_DISABLED: "true"
-  CODE_INTELLIGENCE_DISABLED: "true"
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_HOST: "tcp://docker:2375"
 
-build:
+stages:
+  - test
+  - build
+  - deploy
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - when: always
+
+Build:image:
+  image: nexus.stripchat.tech/docker:stable
+  services:
+    - name: nexus.stripchat.tech/docker:stable-dind
+      alias: docker
+  stage: build
+  tags:
+    - sa_alpha_okd
+  script:
+    - set -xe
+    - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} ${CI_REGISTRY}
+    - docker build -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} .
+    - docker push ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}
+    - |
+      if [[ ${CI_COMMIT_BRANCH} == 'master' ]]
+      then
+        docker tag ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} ${CI_REGISTRY_IMAGE}:latest
+        docker push ${CI_REGISTRY_IMAGE}:latest
+      fi
+  rules:
+    - when: on_success
+
+Deploy:alpha:
+  image: registry.stripchat.dev/external/infrastructure/helm/deploy
+  stage: deploy
+  tags:
+    - ${RUNNER}
+  needs:
+    - Build:image
+  allow_failure: true
   interruptible: true
-
+  environment:
+    name: production
+    url: https://console-openshift-console.apps.${OKD_NAME}.okd.stripchat.tech/project-details/ns/${NAMESPACE}
+  variables:
+    OKD_NAME: alpha
+    CHART: gitlab-dashboard
+    CHART_PATH: ${CI_PROJECT_DIR}/helm/stripcash/${CHART}
+    NAMESPACE: sa-infrastructure
+    RUNNER: sa_alpha_okd
+    HELM_FLAGS: "--namespace ${NAMESPACE} --install --cleanup-on-fail --history-max 5 --wait --timeout 3m --atomic"
+  before_script:
+    - git clone -b SD-8790-stripcash-gitlab-dashboard https://${OPENSHIFT_USER}:${OPENSHIFT_PASSWORD}@gitlab.stripchat.dev/external/infrastructure/helm.git helm
+  script:
+    - set -xe
+    - |
+        helm upgrade ${CHART} ${CHART_PATH} ${HELM_FLAGS} \
+          --values ${CHART_PATH}/values.yaml \
+          --set image.tag="${CI_COMMIT_SHA}" \
+          --set app.env.GITLAB_APP_ID="${GITLAB_APP_ID}" \
+          --set app.env.GITLAB_APP_SECRET="${GITLAB_APP_SECRET}" \
+          --set app.env.GITLAB_TOKEN="${GITLAB_TOKEN}"
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: manual
+    - when: never

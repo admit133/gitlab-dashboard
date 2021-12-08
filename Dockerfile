@@ -1,11 +1,11 @@
-FROM node:lts-alpine AS gui
+FROM nexus.stripchat.tech/node:lts-alpine AS gui
 
 WORKDIR /var/lib/gui
 ADD gui /var/lib/gui
 RUN yarn
 RUN yarn build
 
-FROM golang:1.17 AS server
+FROM nexus.stripchat.tech/golang:1.17 AS server
 
 ADD server /go/src/server
 WORKDIR /go/src/server/cmd/server
@@ -13,7 +13,7 @@ WORKDIR /go/src/server/cmd/server
 RUN CGO_ENABLED=0 GOOS=linux go build -o /go/bin/server
 
 
-FROM alpine
+FROM nexus.stripchat.tech/alpine
 
 COPY --from=server /go/bin/server /bin/server
 COPY --from=gui /var/lib/gui/build /public
