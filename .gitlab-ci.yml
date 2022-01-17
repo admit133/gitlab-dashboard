@@ -55,7 +55,7 @@ Deploy:alpha:
     RUNNER: sa_alpha_okd
     HELM_FLAGS: "--namespace ${NAMESPACE} --install --cleanup-on-fail --history-max 5 --wait --timeout 3m --atomic"
   before_script:
-    - git clone -b SD-8790-stripcash-gitlab-dashboard https://${OPENSHIFT_USER}:${OPENSHIFT_PASSWORD}@gitlab.stripchat.dev/external/infrastructure/helm.git helm
+    - git clone https://${OPENSHIFT_USER}:${OPENSHIFT_PASSWORD}@gitlab.stripchat.dev/external/infrastructure/helm.git helm
   script:
     - set -xe
     - |
