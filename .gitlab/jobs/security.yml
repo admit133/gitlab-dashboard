@@ -1,6 +1,5 @@
 variables:
     SECURE_LOG_LEVEL: "debug"
-    SAST_EXCLUDED_ANALYZERS: "gosec"
 
 include:
   - template: Security/SAST.gitlab-ci.yml
