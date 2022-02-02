@@ -1,6 +1,6 @@
 variables:
     SECURE_LOG_LEVEL: "debug"
-    SAST_EXCLUDED_ANALYZERS: "gosec"
+    SAST_EXCLUDED_ANALYZERS: "gosec, semgrep-sast"
 
 include:
   - template: Security/SAST.gitlab-ci.yml
@@ -11,7 +11,7 @@ gosec:
   image: registry.gitlab.com/security-products/sast/gosec
   script:
     - go mod init gitlab-dashboard
-    - gosec -fmt=json -out=results.json ./... > gl-sast-report.json || true
+    - gosec -fmt=json -out=gl-sast-report.json ./...
   artifacts:
     paths: [ gl-sast-report.json ]
 
