@@ -82,7 +82,7 @@ sentry-report:
     REMOTE_JOB_ID: $CI_JOB_ID
     REMOTE_PROJECT_ID: $CI_PROJECT_ID
     REMOTE_BRANCH: $CI_COMMIT_REF_NAME
-    SENTRY_URL: $SENTRY_URL
+    SENTRY_URL: ${SENTRY_URL}
   trigger:
         project: infrastructure/scan
         branch: gitlab-sast-test
