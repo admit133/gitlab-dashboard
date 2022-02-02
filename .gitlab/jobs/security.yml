@@ -11,7 +11,7 @@ gosec:
   image: registry.gitlab.com/security-products/sast/gosec
   script:
     - go mod init gitlab-dashboard
-    - gosec -fmt=json -out=gl-sast-report.json -stdout -verbose=text ./...
+    - gosec -fmt=json -out=gl-sast-report.json -stdout ./... > gl-sast-report.json || true
   artifacts:
     paths: [ gl-sast-report.json ]
 
