@@ -1,0 +1,90 @@
+variables:
+    SECURE_LOG_LEVEL: "debug"
+    SAST_EXCLUDED_ANALYZERS: "gosec"
+
+include:
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/SAST-IaC.latest.gitlab-ci.yml
+
+semgrep:
+  stage: semgrep
+  image: returntocorp/semgrep-agent:v1
+  script: semgrep-agent --gitlab-json > gl-sast-report.json || true
+
+  variables:
+    SEMGREP_RULES: >- # more at semgrep.dev/explore
+      p/security-audit
+      p/secrets
+
+  # Never fail the build due to findings on pushes.
+  # Instead, just collect findings for semgrep.dev/manage/findings
+  #   SEMGREP_AUDIT_ON: push
+
+  # Upload findings to GitLab SAST Dashboard (remove `script:` line above) [step 2/2]
+
+  artifacts:
+    paths: [ gl-sast-report.json ]
+#    reports:
+#       sast: gl-sast-report.json
+
+sast:
+  stage: test
+  artifacts:
+    paths: [ gl-sast-report.json ]
+  rules:
+    - when: never
+  variables:
+    SEARCH_MAX_DEPTH: 4
+  script:
+    - echo "$CI_JOB_NAME is used for configuration only, and its script should not be executed"
+    - exit 1
+
+.sast-analyzer:
+  extends: sast
+  allow_failure: true
+  # `rules` must be overridden explicitly by each child job
+  # see https://gitlab.com/gitlab-org/gitlab/-/issues/218444
+  script:
+    - /analyzer run
+
+
+iac-sast:
+  stage: test
+  artifacts:
+    paths: [ gl-sast-report.json ]
+  rules:
+    - when: never
+  # `rules` must be overridden explicitly by each child job
+  # see https://gitlab.com/gitlab-org/gitlab/-/issues/218444
+  variables:
+    SEARCH_MAX_DEPTH: 4
+  allow_failure: true
+  script:
+    - /analyzer run
+
+kics-iac-sast:
+  extends: iac-sast
+  image:
+    name: "$SAST_ANALYZER_IMAGE"
+  variables:
+    SAST_ANALYZER_IMAGE_TAG: 1
+    SAST_ANALYZER_IMAGE: "$SECURE_ANALYZERS_PREFIX/kics:$SAST_ANALYZER_IMAGE_TAG"
+  rules:
+    - if: $SAST_DISABLED
+      when: never
+    - if: $SAST_EXCLUDED_ANALYZERS =~ /kics/
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
+
+sentry-report:
+  stage: upload-report-to-sentry
+  variables:
+    REMOTE_JOB_ID: $CI_JOB_ID
+    REMOTE_PROJECT_ID: $CI_PROJECT_ID
+    REMOTE_BRANCH: $CI_COMMIT_REF_NAME
+    SENTRY_URL: $SENTRY_URL
+  trigger:
+        project: infrastructure/scan
+        branch: gitlab-sast-test
+        strategy: depend
